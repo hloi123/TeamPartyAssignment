@@ -12,7 +12,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <dropwizard.version>2.1.4</dropwizard.version>
-        <dropwizard.redis>1.8.0</dropwizard.redis>
     </properties>
 
     <dependencies>
@@ -27,20 +26,17 @@
             <version>${dropwizard.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard.modules</groupId>
-            <artifactId>dropwizard-redis</artifactId>
-            <version>${dropwizard.redis}</version>
-        </dependency>
-        <dependency>
             <groupId>com.github.vladimir-bukhtoyarov</groupId>
             <artifactId>bucket4j-core</artifactId>
             <version>4.10.0</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>com.github.ben-manes.caffeine</groupId>
             <artifactId>caffeine</artifactId>
             <version>2.5.5</version>
         </dependency>
+        -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
