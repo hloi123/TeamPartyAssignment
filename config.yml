@@ -1,0 +1,4 @@
+externalUrl: "https://api.chucknorris.io/jokes/search?query="
+apiLimit:
+  capacity: 5
+  timeInSeconds: 60

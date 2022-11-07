@@ -1,0 +1,9 @@
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/configuration/Constant.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/configuration/ApiLimitConfiguration.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/controller/TeamPartyController.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/dto/JokingData.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/dto/JokingDataList.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/dto/ErrorData.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/configuration/TpConfiguration.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/resource/TeamPartyResource.java
+/home/nhloi/twint/TeamParty/src/main/java/com/teamparty/TeamPartyApplicationRun.java

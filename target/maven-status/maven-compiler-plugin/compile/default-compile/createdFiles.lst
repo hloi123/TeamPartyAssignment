@@ -1,0 +1,9 @@
+com/teamparty/controller/TeamPartyController.class
+com/teamparty/TeamPartyApplicationRun.class
+com/teamparty/configuration/ApiLimitConfiguration.class
+com/teamparty/configuration/Constant.class
+com/teamparty/dto/ErrorData.class
+com/teamparty/dto/JokingDataList.class
+com/teamparty/configuration/TpConfiguration.class
+com/teamparty/dto/JokingData.class
+com/teamparty/resource/TeamPartyResource.class
