@@ -22,14 +22,19 @@ Please upload your code to any online repository of your choice: Github, Gitlab 
 
 ## Project Overview ##
 
-- Dropwizard framework is applied to run the project
-- The config.yml is configured with api limit rate, you can adjust them in `config.yml`
-
+- Dropwizard framework is applied to run the project.
+- The api limit rate is configured in `config.yml` as below:
+  ```
+  apiLimit:
+     capacity: 5
+     timeInSeconds: 60
+  ```
+  
 ## Prerequisite ###
 
-- Jdk 11 installed
-- Maven installed
-- Make sure you have curl
+- Jdk 11 installed.
+- Maven installed.
+- Make sure you have curl.
 
 ## Running application
 
@@ -39,8 +44,6 @@ Please upload your code to any online repository of your choice: Github, Gitlab 
   - `./run.sh`
 - Check server status:
   - `curl localhost:8080/teamparty/healthcheck`
-- Call endpoint to get jokes from Chuck Norris
+- Call endpoint to get jokes from Chuck Norris by replacing query param:
   - `curl localhost:8080/teamparty/getjokes?query={query}`
-
-
 

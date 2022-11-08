@@ -1,15 +1,17 @@
 package com.teamparty.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamparty.configuration.ApiLimitConfiguration;
 import com.teamparty.configuration.TpConfiguration;
 import com.teamparty.dto.ErrorData;
+import com.teamparty.dto.JokingData;
 import com.teamparty.dto.JokingDataList;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Bucket4j;
 import io.github.bucket4j.Refill;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -17,8 +19,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.time.Duration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.teamparty.configuration.Constant.DEFAULT_CAPACITY;
 import static com.teamparty.configuration.Constant.DEFAULT_EXTERNAL_URL;
@@ -28,6 +32,8 @@ public class TeamPartyController {
 
     private TpConfiguration configuration;
     private Map<String, Bucket> bucketMap;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TeamPartyController.class.getName());
 
     public TeamPartyController(TpConfiguration configuration) {
         this.configuration = configuration;
@@ -39,13 +45,13 @@ public class TeamPartyController {
             ErrorData errorData = new ErrorData(query + " is limited, please select another one!", Response.Status.TOO_MANY_REQUESTS.getStatusCode());
             return Response.status(Response.Status.TOO_MANY_REQUESTS).entity(errorData).type(MediaType.APPLICATION_JSON_TYPE).build();
         }
-        JokingDataList jokingDataList = invokeRestClient(query);
+        JokingDataList jokingDataList = invokeRestClient(getUrl(query));
         filterKeywordValue(query, jokingDataList);
         return Response.ok(jokingDataList).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
     /**
-     * Perform API rate Limit based on query search
+     * Perform checking API rate Limit with query search
      *
      * @param query
      * @return boolean
@@ -63,6 +69,11 @@ public class TeamPartyController {
         return false;
     }
 
+    /**
+     * Init bucket for limited query with capacity in time window.
+     *
+     * @param query
+     */
     private void initBucketLimit(String query) {
         ApiLimitConfiguration apiLimitConfig = configuration.getApiLimitConfiguration();
         long capacity = apiLimitConfig != null && apiLimitConfig.getCapacity() != null
@@ -83,34 +94,37 @@ public class TeamPartyController {
      * @param query
      * @param jokingDataList
      */
-    public void filterKeywordValue(String query, JokingDataList jokingDataList) {
+    public JokingDataList filterKeywordValue(String query, JokingDataList jokingDataList) {
         Pattern pattern = Pattern.compile("\\b" + query + "\\b");
-        jokingDataList.getResult().removeIf(j ->
-                j.getValue() == null || !pattern.matcher(j.getValue().toLowerCase()).find());
-        jokingDataList.setTotal(jokingDataList.getResult().size());
+        List<JokingData> filterResults = jokingDataList.getResult().stream().filter(j ->
+                j.getValue() != null && pattern.matcher(j.getValue().toLowerCase()).find()).collect(Collectors.toList());
+        jokingDataList.setResult(filterResults);
+        jokingDataList.setTotal(filterResults.size());
+        return jokingDataList;
     }
 
     /**
      * get Joke data from ChuckNorris api
      *
-     * @param query
+     * @param url
      * @return JokingDataList
      */
-    public JokingDataList invokeRestClient(String query) throws Exception {
-        Client client = ClientBuilder.newClient();
-        String url = configuration.getExternalUrl() == null
+    public JokingDataList invokeRestClient(String url) throws Exception {
+        try {
+            LOGGER.info("Calling External client");
+            Client client = ClientBuilder.newClient();
+            String jsonString = client.target(url).request(MediaType.APPLICATION_JSON_TYPE).accept(MediaType.APPLICATION_JSON_TYPE).get(String.class);
+            return new ObjectMapper().readValue(jsonString, JokingDataList.class);
+        } catch (Exception e) {
+            LOGGER.error("Failing to call external client with query = {}", url, e);
+            throw new Exception("Failing to call external client with query", e);
+        }
+    }
+
+    public String getUrl(String query) {
+        return configuration.getExternalUrl() == null
                 ? DEFAULT_EXTERNAL_URL + query
                 : configuration.getExternalUrl() + query;
-        String jsonString = client.target(url).request(MediaType.APPLICATION_JSON_TYPE).get(String.class);
-        if (jsonString == null) {
-            return new JokingDataList();
-        }
-        try {
-            return new ObjectMapper().readValue(jsonString, JokingDataList.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new Exception("Failing to get jokes from ChuckNorris");
-        }
     }
 
 }

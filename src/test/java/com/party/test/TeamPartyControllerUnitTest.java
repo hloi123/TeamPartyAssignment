@@ -1,17 +1,14 @@
 package com.party.test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamparty.configuration.TpConfiguration;
 import com.teamparty.controller.TeamPartyController;
 import com.teamparty.dto.JokingData;
 import com.teamparty.dto.JokingDataList;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.ws.rs.client.Client;
-import java.io.InputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TeamPartyControllerUnitTest {
 
@@ -30,8 +28,7 @@ public class TeamPartyControllerUnitTest {
     private JokingDataList performGetJokesDataFromChuckNorris(String query) {
         JokingDataList jokingDataList = null;
         try {
-            jokingDataList = controller.invokeRestClient(query);
-
+            jokingDataList = controller.invokeRestClient(controller.getUrl(query));
         } catch (Exception e) {
             fail("Test case failed with error:", e);
         }
@@ -63,7 +60,7 @@ public class TeamPartyControllerUnitTest {
     public void testFilterChuckNorrisJokes_FullMatchOnly() {
         String query = "thunder";
         JokingDataList jokingDataList = performGetJokesDataFromChuckNorris(query);
-        controller.filterKeywordValue(query, jokingDataList);
+        jokingDataList = controller.filterKeywordValue(query, jokingDataList);
         assertEquals(6, jokingDataList.getTotal());
         assertEquals(6, jokingDataList.getResult().size());
     }
@@ -80,5 +77,16 @@ public class TeamPartyControllerUnitTest {
         assertTrue(controller.isLimitedAccess(queryB));
     }
 
+    @Test
+    public void testInvokeRestClient_UrlNull() throws Exception {
+        Client client = mock(Client.class);
+        when(client.target(Mockito.any(String.class))).thenThrow(NullPointerException.class);
+        try {
+            controller.invokeRestClient(null);
+            fail("Exception expected here!");
+        } catch (Exception e) {
+            assertEquals("Failing to call external client with query", e.getMessage());
+        }
+    }
 
 }
