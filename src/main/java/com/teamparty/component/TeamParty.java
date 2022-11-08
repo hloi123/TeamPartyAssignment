@@ -36,7 +36,9 @@ public class TeamParty {
             return Response.status(Response.Status.TOO_MANY_REQUESTS).entity(errorData).type(MediaType.APPLICATION_JSON_TYPE).build();
         }
         JokingDataList jokingDataList = invokeRestClient(getUrl(query));
-        filterKeywordValue(query, jokingDataList);
+        List<JokingData> filterDataList = filterKeywordValue(query, jokingDataList);
+        jokingDataList.setResult(filterDataList);
+        jokingDataList.setTotal(filterDataList.size());
         return Response.ok(jokingDataList).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
