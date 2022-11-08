@@ -1,7 +1,7 @@
 package com.teamparty;
 
 import com.teamparty.configuration.TpConfiguration;
-import com.teamparty.controller.TeamPartyController;
+import com.teamparty.component.TeamParty;
 import com.teamparty.resource.TeamPartyResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
@@ -24,7 +24,7 @@ public class TeamPartyApplicationRun extends Application<TpConfiguration> {
 
     @Override
     public void run(TpConfiguration configuration, Environment environment) throws Exception {
-        TeamPartyResource teamPartyResource = new TeamPartyResource(new TeamPartyController(configuration));
+        TeamPartyResource teamPartyResource = new TeamPartyResource(new TeamParty(configuration));
         environment.jersey().register(teamPartyResource);
     }
 }

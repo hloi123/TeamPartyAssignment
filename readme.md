@@ -1,6 +1,5 @@
 ## TEAM PARTY PROJECT ##
 
-# Business requirements:
 # Problem definition
 
 You have just joined a team that likes coding, joking and Dropwizard framework! Welcome!
@@ -14,7 +13,7 @@ rate limited.
 - Implement a single REST api endpoint for getting jokes for a given keyword. Keyword is sent by an API user;
 - Returned jokes should contain only the full match of the keyword: not partial or a substring;
 - If that key is being requested more than 5 times per minute, that request should be rate limited;
-- As a web framework we suggest using Dropwizard: https://www.dropwizard.io/;
+- As a web framework we suggest using Dropwizard: https://www.dropwizard.io/
 - For getting jokes we suggest using existing online APIs like
   https://api.chucknorris.io/. If you have other online sources, you are free to use it as well.
 

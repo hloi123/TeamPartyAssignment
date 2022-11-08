@@ -1,6 +1,6 @@
 package com.teamparty.resource;
 
-import com.teamparty.controller.TeamPartyController;
+import com.teamparty.component.TeamParty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -21,10 +21,10 @@ import static com.teamparty.configuration.Constant.TEAM_PARTY_URL;
 @Produces(MediaType.APPLICATION_JSON)
 public class TeamPartyResource {
 
-    private TeamPartyController teamPartyController;
+    private TeamParty teamParty;
 
-    public TeamPartyResource(TeamPartyController teamPartyController) {
-        this.teamPartyController = teamPartyController;
+    public TeamPartyResource(TeamParty teamParty) {
+        this.teamParty = teamParty;
     }
 
     @GET
@@ -36,6 +36,6 @@ public class TeamPartyResource {
     @GET
     @Path(GETJOKES_URL)
     public Response getJokes(@QueryParam("query") @Size(min = 3, max = 120) @Valid @NotNull String query) throws Exception {
-        return teamPartyController.getJokes(query.toLowerCase());
+        return teamParty.getJokes(query.toLowerCase());
     }
 }
